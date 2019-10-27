@@ -1,0 +1,10 @@
+---
+dev1:
+  nginx_port: 9090
+  tomcat_port: 8080
+dev2:
+  nginx_port: 9190
+  tomcat_port: 9080
+dev3:
+  nginx_port: 9290
+  tomcat_port: 7080

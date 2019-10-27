@@ -5,6 +5,17 @@
     <body>
         <h1>Nginx, configured by Ansible</h1>
         <p>If you can see this, Ansible successfully installed Nginx.</p>
-        <p>Running on {{ inventory_hostname }}</p>
+        <dl>
+            <dt>inventory_hostname</dt>
+                <dd>{{ inventory_hostname }}</dd>
+            <dt>ansible_host</dt>
+                <dd>{{ ansible_host }}</dd>
+            <dt>ansible_port</dt>
+                <dd>{{ ansible_port }}</dd>
+            <dt>nginx_port</dt>
+                <dd>{{ hostvars[inventory_hostname][sdms_environment]['nginx_port'] }}</dd>
+            <dt>sdms_environment</dt>
+                <dd>{{ sdms_environment }}</dd>
+        </dl>
     </body>
 </html>

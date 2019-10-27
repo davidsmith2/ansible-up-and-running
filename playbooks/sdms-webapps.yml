@@ -1,10 +1,12 @@
 ---
 - name: Configure webserver with Nginx
-  hosts: "{{ sdms_environment }}"
+  hosts: dev
   become: True
   vars:
     conf_file: /etc/nginx/sites-available/default
     server_name: localhost
+    server_port: "{{ hostvars[inventory_hostname][sdms_environment]['nginx_port'] }}"
+    sdms_environment: "{{ sdms_environment }}"
   tasks:
     - name: install Nginx
       apt: name=nginx update_cache=yes cache_valid_time=3600
