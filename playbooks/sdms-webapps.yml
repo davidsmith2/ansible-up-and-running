@@ -1,19 +1,19 @@
 ---
 - name: Configure webserver with Nginx
-  hosts: webservers
+  hosts: "{{ sdms_environment }}"
   become: True
+  vars:
+    conf_file: /etc/nginx/sites-available/default
+    server_name: localhost
   tasks:
     - name: install Nginx
-      apt: name=nginx update_cache=yes
+      apt: name=nginx update_cache=yes cache_valid_time=3600
 
     - name: copy Nginx config file
-      copy: src=files/nginx.conf dest=/etc/nginx/sites-available/default
+      template: src=templates/nginx.conf.j2 dest={{ conf_file }}
 
     - name: enable configuration
-      file: >
-        dest=/etc/nginx/sites-enabled/default
-        src=/etc/nginx/sites-available/default
-        state=link
+      file: src={{ conf_file }} dest=/etc/nginx/sites-enabled/default state=link
 
     - name: copy index.html
       template: src=templates/index.html.j2 dest=/usr/share/nginx/html/index.html mode=0644

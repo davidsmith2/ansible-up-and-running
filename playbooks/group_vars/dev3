@@ -1,0 +1,2 @@
+tomcat_port: 7080
+nginx_port: 9290
