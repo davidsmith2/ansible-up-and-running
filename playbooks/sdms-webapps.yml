@@ -1,13 +1,26 @@
 ---
 - name: Configure webserver with Nginx
-  hosts: dev
+  hosts: "{{ hosts | default('dev') }}"
   become: True
   vars:
+    sdms_environments: "{{ sdms_environments }}"
     conf_file: /etc/nginx/sites-available/default
     server_name: localhost
-    server_port: "{{ hostvars[inventory_hostname][sdms_environment]['nginx_port'] }}"
-    sdms_environment: "{{ sdms_environment }}"
   tasks:
+    - name: register a list to store environment data
+      set_fact:
+        nginx_servers: []
+
+    - name: populate the list that stores environment data
+      set_fact:
+        nginx_servers: "{{nginx_servers + [hostvars[inventory_hostname][item]]}}"
+      loop: "{{ sdms_environments }}"
+
+    - debug: var=nginx_servers
+
+    - name: remove package
+      apt: name=nginx state=absent
+
     - name: install Nginx
       apt: name=nginx update_cache=yes cache_valid_time=3600
 
@@ -17,8 +30,17 @@
     - name: enable configuration
       file: src={{ conf_file }} dest=/etc/nginx/sites-enabled/default state=link
 
+    - name: create root directory
+      file:
+        path: "{{item.root}}"
+        state: directory
+      loop: "{{ nginx_servers }}"
+
     - name: copy index.html
-      template: src=templates/index.html.j2 dest=/usr/share/nginx/html/index.html mode=0644
+      template: src=templates/index.html.j2 dest={{item.root}}/index.html mode=0644
+      loop: "{{ nginx_servers }}"
+      vars:
+        nginx_server: "{{ item }}"
 
     - name: restart Nginx
       service: name=nginx state=restarted

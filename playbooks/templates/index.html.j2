@@ -5,17 +5,39 @@
     <body>
         <h1>Nginx, configured by Ansible</h1>
         <p>If you can see this, Ansible successfully installed Nginx.</p>
+        <h2>Built-in variables</h2>
         <dl>
             <dt>inventory_hostname</dt>
                 <dd>{{ inventory_hostname }}</dd>
+            <dt>inventory_hostname_short</dt>
+                <dd>{{ inventory_hostname_short }}</dd>
+            <dt>group_names</dt>
+                <dd>{{ group_names }}</dd>
+            <dt>groups</dt>
+                <dd>{{ groups }}</dd>
             <dt>ansible_host</dt>
                 <dd>{{ ansible_host }}</dd>
             <dt>ansible_port</dt>
                 <dd>{{ ansible_port }}</dd>
-            <dt>nginx_port</dt>
-                <dd>{{ hostvars[inventory_hostname][sdms_environment]['nginx_port'] }}</dd>
-            <dt>sdms_environment</dt>
-                <dd>{{ sdms_environment }}</dd>
+        </dl>
+        <h2>Extra variables</h2>
+        <dl>
+            <dt>hosts</dt>
+                <dd>{{ hosts }}</dd>
+            <dt>sdms_environments</dt>
+                <dd>{{ sdms_environments }}</dd>
+        </dl>
+        <h2>Facts</h2>
+        <dl>
+            <dt>nginx_servers</dt>
+                <dd>{{ nginx_servers }}</dd>
+        </dl>
+        <h2>Task variables</h2>
+        <dl>
+            <dt>nginx_server.listen</dt>
+                <dd>{{ nginx_server.listen }}</dd>
+            <dt>nginx_server.root</dt>
+                <dd>{{ nginx_server.root }}</dd>
         </dl>
     </body>
 </html>

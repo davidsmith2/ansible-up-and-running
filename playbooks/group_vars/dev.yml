@@ -1,10 +1,10 @@
 ---
 dev1:
-  nginx_port: 9090
-  tomcat_port: 8080
+  root: /usr/share/nginx/html/dev1
+  listen: 9090
 dev2:
-  nginx_port: 9190
-  tomcat_port: 9080
+  root: /usr/share/nginx/html/dev2
+  listen: 9190
 dev3:
-  nginx_port: 9290
-  tomcat_port: 7080
+  root: /usr/share/nginx/html/dev3
+  listen: 9290

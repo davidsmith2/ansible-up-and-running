@@ -1,12 +1,15 @@
-server {
-    listen {{ server_port }} default_server;
+{% for nginx_server in nginx_servers %}
 
-    root /usr/share/nginx/html;
-    index index.html index.htm
+    server {
+        listen {{ nginx_server.listen }} default_server;
 
-    server_name {{ server_name }};
+        root {{ nginx_server.root }};
+        index index.html index.htm
+        server_name localhost;
 
-    location / {
-        try_files $uri $uri/ =404;
+        location / {
+            try_files $uri $uri/ =404;
+        }
     }
-}
+
+{% endfor %}
