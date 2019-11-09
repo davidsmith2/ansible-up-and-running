@@ -32,15 +32,17 @@
 
     - name: create root directory
       file:
-        path: "{{item.root}}"
+        path: "{{nginx_server.root}}"
         state: directory
       loop: "{{ nginx_servers }}"
+      loop_control:
+        loop_var: nginx_server
 
     - name: copy index.html
-      template: src=templates/index.html.j2 dest={{item.root}}/index.html mode=0644
+      template: src=templates/index.html.j2 dest={{nginx_server.root}}/index.html mode=0644
       loop: "{{ nginx_servers }}"
-      vars:
-        nginx_server: "{{ item }}"
+      loop_control:
+        loop_var: nginx_server
 
     - name: restart Nginx
       service: name=nginx state=restarted
