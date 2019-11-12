@@ -36,12 +36,6 @@
       - pip
       - virtualenv
       - virtualenvwrapper
-    python_pkgs:
-      - gunicorn
-      - setproctitle
-      - psycopg2
-      - django_compressor
-      - python_memcached
   vars_files:
     - secrets.yml
   tasks:
@@ -59,10 +53,6 @@
     - name: install Python requirements globally via Pip
       pip: name={{ python_reqs }} state=latest
       become: True
-    - name: install requirements.txt
-      pip: requirements={{ proj_path }}/{{ reqs_path }} virtualenv={{ venv_path }}
-    - name: install required Python packages
-      pip: name={{ python_pkgs }} virtualenv={{ venv_path }}
     - name: create project locale
       locale_gen: name={{ locale }}
     - name: create a DB user
@@ -85,3 +75,15 @@
       template:
         src=templates/local_settings.py.j2
         dest={{ settings_path }}/local_settings.py
+    - name: copy requirements.txt file
+      copy: src=files/requirements.txt dest=~/requirements.txt
+    - name: install packages
+      pip: requirements=~/requirements.txt virtualenv={{ venv_path }}
+    - name: apply migrations to create the database, collect static content
+      django_manage:
+        command: "{{ item }}"
+        app_path: "{{ proj_path }}"
+        virtualenv: "{{ venv_path }}"
+      with_items:
+        - migrate
+        - collectstatic
