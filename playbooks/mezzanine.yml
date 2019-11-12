@@ -7,7 +7,11 @@
     venv_home: "{{ ansible_env.HOME }}/.virtualenvs"
     venv_path: "{{ venv_home }}/{{ proj_name }}"
     proj_path: "{{ ansible_env.HOME }}/mezzanine/{{ proj_name }}"
+    settings_path: "{{ proj_path }}/{{ proj_name }}"
     reqs_path: requirements.txt
+    domains:
+      - 192.168.33.10.xip.io
+      - www.192.168.33.10.xip.io
     repo_url: git@github.com:ansiblebook/mezzanine_example.git
     locale: en_US.UTF-8
     database_name: "{{ proj_name }}"
@@ -77,4 +81,7 @@
         template: template0 
       become: True
       become_user: postgres
-
+    - name: generate the settings file
+      template:
+        src=templates/local_settings.py.j2
+        dest={{ settings_path }}/local_settings.py
