@@ -1,2 +1,1 @@
-vagrant ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant
-ec2 ansible_host=ec2-54-157-252-132.compute-1.amazonaws.com ansible_user=ec2-user ansible_private_key_file=/Users/davidsmith/.ssh/MyNewKeyPair.pem
+web ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant

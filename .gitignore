@@ -1,3 +1,2 @@
 playbooks/.vagrant
-
-ec2
+playbooks/secrets.yml

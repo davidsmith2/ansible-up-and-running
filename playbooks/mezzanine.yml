@@ -1,0 +1,80 @@
+---
+- name: Deploy Mezzanine
+  hosts: web
+  vars:
+    proj_app: mezzanine_example
+    proj_name: "{{ proj_app }}"
+    venv_home: "{{ ansible_env.HOME }}/.virtualenvs"
+    venv_path: "{{ venv_home }}/{{ proj_name }}"
+    proj_path: "{{ ansible_env.HOME }}/mezzanine/{{ proj_name }}"
+    reqs_path: requirements.txt
+    repo_url: git@github.com:ansiblebook/mezzanine_example.git
+    locale: en_US.UTF-8
+    database_name: "{{ proj_name }}"
+    database_user: "{{ proj_name }}"
+    database_host: localhost
+    database_port: 5432
+    apt_packages:
+      - coreutils
+      - git
+      - libjpeg-dev
+      - libpq-dev
+      - memcached
+      - nginx
+      - postgresql
+      - python-dev
+      - python-pip
+      - python-psycopg2
+      - python-setuptools
+      - python-virtualenv
+      - supervisor
+    python_reqs:
+      - pip
+      - virtualenv
+      - virtualenvwrapper
+    python_pkgs:
+      - gunicorn
+      - setproctitle
+      - psycopg2
+      - django_compressor
+      - python_memcached
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: install apt packages
+      apt: pkg={{apt_packages}} update_cache=yes cache_valid_time=3600
+      become: True
+    - name: create project path
+      file: path={{ proj_path }} state=directory
+    - name: create a logs directory
+      file:
+        path: "{{ ansible_env.HOME}}/logs"
+        state: directory
+    - name: check out the repository on the host
+      git: repo={{ repo_url }} dest={{ proj_path }} accept_hostkey=yes
+    - name: install Python requirements globally via Pip
+      pip: name={{ python_reqs }} state=latest
+      become: True
+    - name: install requirements.txt
+      pip: requirements={{ proj_path }}/{{ reqs_path }} virtualenv={{ venv_path }}
+    - name: install required Python packages
+      pip: name={{ python_pkgs }} virtualenv={{ venv_path }}
+    - name: create project locale
+      locale_gen: name={{ locale }}
+    - name: create a DB user
+      postgresql_user:
+        name: "{{ database_user }}"
+        password: "{{ db_pass }}"
+      become: True
+      become_user: postgres
+    - name: create the database
+      postgresql_db:
+        name: "{{ database_name }}"
+        owner: "{{ database_user }}"
+        encoding: UTF8
+        lc_ctype: "{{ locale }}"
+        lc_collate: "{{ locale }}"
+        template: template0 
+      become: True
+      become_user: postgres
+
